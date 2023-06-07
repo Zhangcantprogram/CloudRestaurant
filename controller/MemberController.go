@@ -21,6 +21,9 @@ func (mc *MemberController) Router(engine *gin.Engine) {
 
 	//验证验证码是否正确
 	engine.POST("/api/vertifycha", mc.vertifyCaptcha)
+
+	//进行用户名和密码的登录功能
+	engine.POST("/api/login_pwd", mc.nameLogin)
 }
 
 // http://localhost:8090/api/sendcode?phone=13112345678
@@ -79,4 +82,33 @@ func (mc *MemberController) vertifyCaptcha(context *gin.Context) {
 	} else {
 		fmt.Println("验证码验证失败！......")
 	}
+}
+
+// 根据用户名和密码来进行登录
+func (mc *MemberController) nameLogin(context *gin.Context) {
+	//1、获取前端传来的参数
+	var loginParam param.LoginParam
+	err := tool.Decode(context.Request.Body, &loginParam)
+	if err != nil {
+		tool.Failed(context, "参数解析失败！")
+		return
+	}
+	//2、验证验证码
+	//fmt.Println(loginParam)
+	result := tool.VertifyCaptcha(loginParam.Id, loginParam.Value)
+	//result-----------> false
+	fmt.Println("result----------->", result)
+	if !result {
+		tool.Failed(context, "验证码错误，请重新输入！")
+		return
+	}
+	//3、完成登录
+	ms := service.MemberService{}
+	member := ms.NameLogin(loginParam.Name, loginParam.Password)
+	if member.Id != 0 {
+		tool.Success(context, "用户登录成功！")
+		return
+	}
+	//否则登录失败
+	tool.Failed(context, "用户登录失败！")
 }

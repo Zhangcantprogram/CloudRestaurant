@@ -2,7 +2,6 @@ package main
 
 import (
 	"CloudRestaurant/controller"
-	"CloudRestaurant/global"
 	"CloudRestaurant/tool"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -19,7 +18,7 @@ func main() {
 
 	//启动gorm连接数据库，并将DB保存为全局变量
 	tool.GetDb()
-	defer global.DB.Close()
+	defer tool.DB.Close()
 
 	//初始化redis配置
 	tool.InitRedisStore()

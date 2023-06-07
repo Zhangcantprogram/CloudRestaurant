@@ -17,7 +17,7 @@ func GenerateCaptcha(ctx *gin.Context) {
 	//图形验证码的默认配置
 	parameters := base64Captcha.ConfigCharacter{
 		Height:             60,
-		Width:              240,
+		Width:              120,
 		Mode:               3,
 		ComplexOfNoiseText: 0,
 		ComplexOfNoiseDot:  0,

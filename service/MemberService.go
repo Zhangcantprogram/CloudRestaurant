@@ -86,3 +86,25 @@ func (ms *MemberService) SendCode(phone string) bool {
 
 	return false
 }
+
+// 用户名+密码 实现登录
+func (ms *MemberService) NameLogin(name string, password string) *model.Member {
+	//1、使用用户名+密码 查询用户信息  如果用户存在，则直接返回member结构体
+	md := dao.MemberDao{}
+	member := md.QueryByName(name, password)
+	if member.Id != 0 {
+		//说明该用户已存在
+		return member
+	}
+
+	//2、如果用户不存在，则作为新用户保存到数据库中
+	newMember := model.Member{}
+	newMember.UserName = name
+	//利用sha256进行加密处理
+	newMember.Password = tool.EncoderSha256(password)
+	newMember.RegisterTime = time.Now().Unix()
+	//再调用InsertMember方法进行用户的添加
+	result := md.InsertMember(newMember)
+	newMember.Id = result
+	return &newMember
+}
