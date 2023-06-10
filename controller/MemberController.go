@@ -20,7 +20,7 @@ func (mc *MemberController) Router(engine *gin.Engine) {
 	engine.GET("/api/captcha", mc.captcha)
 
 	//验证验证码是否正确
-	engine.POST("/api/vertifycha", mc.vertifyCaptcha)
+	engine.POST("/api/vertifycha", mc.verifyCaptcha)
 
 	//进行用户名和密码的登录功能
 	engine.POST("/api/login_pwd", mc.nameLogin)
@@ -69,14 +69,15 @@ func (mc *MemberController) captcha(context *gin.Context) {
 }
 
 // 验证验证码是否正确
-func (mc *MemberController) vertifyCaptcha(context *gin.Context) {
+func (mc *MemberController) verifyCaptcha(context *gin.Context) {
 	var captcha tool.CaptchaResult
 	err := tool.Decode(context.Request.Body, &captcha)
 	if err != nil {
 		tool.Failed(context, "参数解析失败！......")
 		return
 	}
-	result := tool.VertifyCaptcha(captcha.Id, captcha.VertifyValue)
+	result := tool.VerifyCaptcha(captcha.Id, captcha.VerifyValue)
+	fmt.Println("result++----------->", result)
 	if result {
 		fmt.Println("验证码验证通过！！！")
 	} else {
@@ -91,11 +92,12 @@ func (mc *MemberController) nameLogin(context *gin.Context) {
 	err := tool.Decode(context.Request.Body, &loginParam)
 	if err != nil {
 		tool.Failed(context, "参数解析失败！")
+		//fmt.Println("参数解析失败!.....")
 		return
 	}
 	//2、验证验证码
-	//fmt.Println(loginParam)
-	result := tool.VertifyCaptcha(loginParam.Id, loginParam.Value)
+	fmt.Println(loginParam)
+	result := tool.VerifyCaptcha(loginParam.Id, loginParam.Value)
 	//result-----------> false
 	fmt.Println("result----------->", result)
 	if !result {

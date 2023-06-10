@@ -57,8 +57,8 @@ func (md *MemberDao) InsertMember(member model.Member) int64 {
 func (md *MemberDao) QueryByName(name string, password string) *model.Member {
 	var member model.Member
 	password = tool.EncoderSha256(password)
-	result := tool.DB.Debug().Where("name = ? and password = ?", name, password).First(&member)
-	if member.Id == 0 {
+	result := tool.DB.Debug().Where("user_name = ? and password = ?", name, password).First(&member)
+	if member.Id == -1 {
 		//说明数据库中查询不到信息
 		log.Fatalln(result.Error.Error())
 		return nil

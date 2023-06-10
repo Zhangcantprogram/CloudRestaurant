@@ -7,17 +7,17 @@ import (
 )
 
 type CaptchaResult struct {
-	Id           string `json:"id"`
-	Base64Blob   string `json:"base_64_blob"`
-	VertifyValue string `json:"code"`
+	Id          string `json:"id"`
+	Base64Blob  string `json:"base_64_blob"`
+	VerifyValue string `json:"code"`
 }
 
 // 生成图形化验证码
 func GenerateCaptcha(ctx *gin.Context) {
 	//图形验证码的默认配置
 	parameters := base64Captcha.ConfigCharacter{
-		Height:             60,
-		Width:              120,
+		Height:             30,
+		Width:              60,
 		Mode:               3,
 		ComplexOfNoiseText: 0,
 		ComplexOfNoiseDot:  0,
@@ -48,7 +48,7 @@ func GenerateCaptcha(ctx *gin.Context) {
 }
 
 // 验证验证码是否正确
-func VertifyCaptcha(id string, value string) bool {
+func VerifyCaptcha(id string, value string) bool {
 	verifyResult := base64Captcha.VerifyCaptcha(id, value)
 	return verifyResult
 }
