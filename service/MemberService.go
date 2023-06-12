@@ -108,3 +108,14 @@ func (ms *MemberService) NameLogin(name string, password string) *model.Member {
 	newMember.Id = result
 	return &newMember
 }
+
+// 保存文件的本地路径，保存到member表中的avatar字段中
+func (ms *MemberService) UploadAvatar(userId int64, fileName string) string {
+	md := dao.MemberDao{}
+	result := md.UploadAvatarByMember(userId, fileName)
+	if result == 0 {
+		log.Fatalln("数据库头像字段更新失败！")
+		return ""
+	}
+	return fileName
+}

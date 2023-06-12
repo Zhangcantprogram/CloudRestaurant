@@ -12,7 +12,7 @@
             <input id="upload_file" ref="upload_file" type="file" class="upload_file" accept="image/png,image/jpeg,image/jpg" multiple="false" @change="inputChange" />
           </div>
           <div class="user-info">
-            <p class="user-info-top">{{userInfo.user_name || '登录/注册'}}</p>
+            <p class="user-info-top"> {{userInfo.user_name || '登录/注册'}}</p>
             <p>
               <span class="user-icon">
                 <i class="iconfont icon-msnui-tel icon-mobile"></i>
@@ -141,7 +141,12 @@ export default {
       const file = e.target.files[0]
       const formData = new window.FormData()
       formData.append('avatar', file)
-      formData.append('user_id', this.userInfo.id)
+      //formData.append('user_id', this.userInfo.id)
+      formData.append('user_id', 2)
+      // console.log(this.userInfo)
+      // console.log(11111111111111)
+      // console.log(formData)
+      // console.log(this.userInfo.id)
       const result = await uploadFile(formData)
       if (result.code === 0) {
         Toast('上传成功')
