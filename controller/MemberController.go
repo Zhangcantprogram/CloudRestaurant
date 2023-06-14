@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"log"
+	"os"
 	"strconv"
 	"time"
 )
@@ -67,13 +68,17 @@ func (mc *MemberController) smsLogin(context *gin.Context) {
 		//将member进行序列化，为接下来的
 		sess, _ := json.Marshal(member)
 		//将登录成功的用户信息保存到session中
-		tool.SetSess(context, "user_"+string(member.Id), sess)
+		log.Println("member.Id-------------->", member.Id)
+		//log.Println("sess------------->", sess)
+		err := tool.SetSess(context, "user_"+strconv.Itoa(int(member.Id)), sess)
 		if err != nil {
 			//说明存在error，即用户虽然登录成功，但是session保存失败，也视为登录失败
 			tool.Failed(context, "用户登录失败！")
+			log.Println("Setsess用户登录失败!")
 			return
 		}
 		tool.Success(context, member)
+		log.Println("手机号+短信验证码 登录成功！！")
 		return
 	}
 	tool.Failed(context, "手机号验证码登录失败！......")
@@ -102,7 +107,7 @@ func (mc *MemberController) verifyCaptcha(context *gin.Context) {
 	}
 }
 
-// 根据用户名和密码来进行登录
+// 根据用户名和密码 来进行登录
 func (mc *MemberController) nameLogin(context *gin.Context) {
 	//1、获取前端传来的参数
 	var loginParam param.LoginParam
@@ -123,18 +128,21 @@ func (mc *MemberController) nameLogin(context *gin.Context) {
 	//3、完成登录
 	ms := service.MemberService{}
 	member := ms.NameLogin(loginParam.Name, loginParam.Password)
-	if member.Id != 0 {
-		//将member进行序列化，为接下来的
+	if member != nil {
+		//将member进行序列化，为接下来保存session做准备
 		sess, _ := json.Marshal(member)
 		//将登录成功的用户信息保存到session中
 		fmt.Println("member.Id-------------->", member.Id)
-		err = tool.SetSess(context, "user_"+string(member.Id), sess)
+		//log.Println("sess------------->", sess)
+		log.Println("set session user_" + strconv.Itoa(int(member.Id)))
+		err = tool.SetSess(context, "user_"+strconv.Itoa(int(member.Id)), sess)
 		if err != nil {
 			//说明存在error，即用户虽然登录成功，但是session保存失败，也视为登录失败
 			tool.Failed(context, "用户登录失败！")
 			return
 		}
-		tool.Success(context, "用户登录成功！")
+		tool.Success(context, member)
+		log.Println("用户名+密码+验证码 登录成功")
 		return
 	}
 	//否则登录失败
@@ -153,10 +161,12 @@ func (mc *MemberController) uploadAvatar(context *gin.Context) {
 	}
 
 	//2、判断用户是否已经登录，使用session
+	log.Println("get session user_" + userId)
 	sess := tool.GetSess(context, "user_"+userId)
 	log.Println("用户登录时的sess---->", sess)
 	if sess == nil {
 		tool.Failed(context, "用户登录信息有误！")
+		log.Println("用户登录信息有误！")
 		return
 	}
 
@@ -171,14 +181,22 @@ func (mc *MemberController) uploadAvatar(context *gin.Context) {
 		return
 	}
 
-	//4、将保存后的文件本地路径，保存到用户表中的头像字段
-	ms := service.MemberService{}
-	//这里使用 fileName[1:]的切片形式，是为了保存的过程中不保存一开始的那个 “.”
-	path := ms.UploadAvatar(member.Id, fileName[1:])
-	if path != "" {
-		tool.Success(context, "http://localhost:8090"+path)
-		return
+	//将文件上传到FastDFS文件分布式系统
+	fileId := tool.UploadFile(fileName)
+	if fileId != "" {
+		//删除本地文件
+		os.Remove(fileName)
+
+		//将文件对应路径保存到数据库中
+		ms := service.MemberService{}
+		//这里使用 fileName[1:]的切片形式，是为了保存的过程中不保存一开始的那个 “.”
+		path := ms.UploadAvatar(member.Id, fileId)
+		if path != "" {
+			tool.Success(context, tool.FileServerAddr()+"/"+path)
+			return
+		}
 	}
+
 	//5、返回结果
 	tool.Failed(context, "头像更新失败！")
 }

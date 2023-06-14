@@ -31,7 +31,7 @@ func (ms *MemberService) SmsLogin(loginParam param.SmsLoginParam) *model.Member 
 	//3.根据手机号在member表中查询记录
 	member := md.QueryByPhone(loginParam.Phone)
 	//fmt.Println(member.Mobile)
-	if member.Id != 0 {
+	if member != nil {
 		//说明能在member表中查询到数据
 		return member
 	}
@@ -52,7 +52,7 @@ func (ms *MemberService) SendCode(phone string) bool {
 	smsConfig := tool.GetConfig().Sms
 	client, err := dysmsapi.NewClientWithAccessKey(smsConfig.RegionId, smsConfig.AppKey, smsConfig.AppSecret)
 	if err != nil {
-		log.Fatalln(err.Error())
+		log.Println(err.Error())
 		return false
 	}
 
@@ -70,7 +70,7 @@ func (ms *MemberService) SendCode(phone string) bool {
 	response, err := client.SendSms(request)
 	fmt.Println(response)
 	if err != nil {
-		log.Fatalln(err.Error())
+		log.Println(err.Error())
 		return false
 	}
 
@@ -114,7 +114,7 @@ func (ms *MemberService) UploadAvatar(userId int64, fileName string) string {
 	md := dao.MemberDao{}
 	result := md.UploadAvatarByMember(userId, fileName)
 	if result == 0 {
-		log.Fatalln("数据库头像字段更新失败！")
+		log.Println("数据库头像字段更新失败！")
 		return ""
 	}
 	return fileName

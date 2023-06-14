@@ -39,6 +39,7 @@ require (
 	github.com/opentracing/opentracing-go v1.2.1-0.20220228012449-10b1cf09e00b // indirect
 	github.com/pelletier/go-toml/v2 v2.0.8 // indirect
 	github.com/redis/go-redis/v9 v9.0.5 // indirect
+	github.com/tedcy/fdfs_client v0.0.0-20200106031142-21a04994525a // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.2.11 // indirect
 	golang.org/x/arch v0.3.0 // indirect

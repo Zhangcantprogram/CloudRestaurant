@@ -23,11 +23,11 @@ func main() {
 	//初始化redis配置
 	tool.InitRedisStore()
 
-	//初始化session
-	tool.InitSession(app)
-
 	//设置全局跨域访问
 	app.Use(Cors())
+
+	//初始化session
+	tool.InitSession(app)
 
 	//注册路由
 	registerRouter(app)

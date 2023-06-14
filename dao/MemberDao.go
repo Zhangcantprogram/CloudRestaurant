@@ -14,7 +14,7 @@ func (md *MemberDao) InsertSmsCode(sms model.SmsCode) int64 {
 	result := tool.DB.Model(&model.SmsCode{}).Create(&sms)
 	if result.Error != nil {
 		//如果有错误则打印错误
-		log.Fatalln(result.Error.Error())
+		log.Println(result.Error.Error())
 	}
 	//返回受影响的行数
 	return result.RowsAffected
@@ -26,7 +26,7 @@ func (md *MemberDao) ValidateSmsCode(phone string, code string) *model.SmsCode {
 	find := tool.DB.Debug().Where("phone = ? and code = ? ", phone, code).First(&smsCode)
 	if smsCode.Id == 0 {
 		//如果没查询出来数据，则打印错误
-		log.Fatalln(find.Error.Error())
+		log.Println(find.Error.Error())
 	}
 	return &smsCode
 }
@@ -35,9 +35,10 @@ func (md *MemberDao) ValidateSmsCode(phone string, code string) *model.SmsCode {
 func (md *MemberDao) QueryByPhone(phone string) *model.Member {
 	var member model.Member
 	find := tool.DB.Debug().Where("mobile = ?", phone).First(&member)
-	if member.Id == 0 {
+	if find.RowsAffected == 0 {
 		//如果有错误则打印错误
-		log.Fatalln(find.Error.Error())
+		log.Println(find.Error.Error())
+		return nil
 	}
 	return &member
 }
@@ -47,7 +48,7 @@ func (md *MemberDao) InsertMember(member model.Member) int64 {
 	result := tool.DB.Create(&member)
 	if result.Error != nil {
 		//如果有错误则打印错误
-		log.Fatalln(result.Error.Error())
+		log.Println(result.Error.Error())
 	}
 	//返回受影响的行数
 	return result.RowsAffected
@@ -60,7 +61,7 @@ func (md *MemberDao) QueryByName(name string, password string) *model.Member {
 	result := tool.DB.Debug().Where("user_name = ? and password = ?", name, password).First(&member)
 	if member.Id == -1 {
 		//说明数据库中查询不到信息
-		log.Fatalln(result.Error.Error())
+		log.Println(result.Error.Error())
 		return nil
 	}
 	return &member
@@ -71,7 +72,7 @@ func (md *MemberDao) UploadAvatarByMember(id int64, fileName string) int64 {
 	member := model.Member{Avatar: fileName}
 	result := tool.DB.Where("user_id = ?", id).Update(&member)
 	if member.Id == 0 {
-		log.Fatalln(result.Error.Error())
+		log.Println(result.Error.Error())
 		return 0
 	}
 	return result.RowsAffected

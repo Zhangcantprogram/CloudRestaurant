@@ -141,12 +141,7 @@ export default {
       const file = e.target.files[0]
       const formData = new window.FormData()
       formData.append('avatar', file)
-      //formData.append('user_id', this.userInfo.id)
-      formData.append('user_id', 2)
-      // console.log(this.userInfo)
-      // console.log(11111111111111)
-      // console.log(formData)
-      // console.log(this.userInfo.id)
+      formData.append('user_id', this.userInfo.id)
       const result = await uploadFile(formData)
       if (result.code === 0) {
         Toast('上传成功')
