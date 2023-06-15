@@ -42,6 +42,7 @@ func registerRouter(engine *gin.Engine) {
 	new(controller.MemberController).Router(engine)
 	new(controller.FoodCategoryController).Router(engine)
 	new(controller.ShopController).Router(engine)
+	new(controller.GoodsController).Router(engine)
 }
 
 // 跨域中间件配置

@@ -5,7 +5,7 @@ package model
  */
 type Shop struct {
 	//id
-	Id int64 `gorm:"primary_key;column:id'" json:"id"`
+	Id int64 `gorm:"primaryKey;AUTO_INCREMENT;column:id'" json:"id"`
 	//商铺名称
 	Name string `gorm:"column:name" json:"name"`
 	//宣传信息
@@ -43,6 +43,10 @@ type Shop struct {
 
 	//营业时间
 	OpeningHours string `gorm:"column:opening_hours" json:"opening_hours"`
+
+	//与tb_service表进行链表查询
+	//`gorm:"-"`  表示不映射这个字段
+	Supports []Service `gorm:"-"`
 }
 
 func (Shop) TableName() string {

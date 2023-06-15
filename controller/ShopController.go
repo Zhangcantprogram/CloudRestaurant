@@ -4,6 +4,7 @@ import (
 	"CloudRestaurant/service"
 	"CloudRestaurant/tool"
 	"github.com/gin-gonic/gin"
+	"log"
 )
 
 type ShopController struct {
@@ -57,10 +58,24 @@ func (sc *ShopController) searchShop(context *gin.Context) {
 
 	shopService := service.ShopService{}
 	shops := shopService.SearchShops(longitude, latitude, keyword)
+	if len(shops) == 0 {
+		tool.Failed(context, "暂未获得商铺信息！")
+		return
+	}
+	for _, shop := range shops {
+		services := shopService.GetServiceByShopId(int(shop.Id))
+		if len(services) == 0 {
+			shop.Supports = nil
+		} else {
+			log.Println("services", services)
+			//shop.Supports = &services
+			for _, service := range services {
+				shop.Supports = append(shop.Supports, service)
+			}
+			log.Println("shop.Supports", shop.Supports)
+		}
+
+	}
 	tool.Success(context, shops)
-	//if len(shops) != 0 {
-	//	tool.Success(context, shops)
-	//	return
-	//}
-	//tool.Failed(context, "商铺数据返回失败！")
+
 }

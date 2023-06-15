@@ -21,8 +21,6 @@ func (sd *ShopDao) GetShops(longitude, latitude float64, keyword string) []model
 		//则说明没有使用条件查询
 		tool.DB.Where("longitude > ? and longitude < ? and latitude > ? and latitude < ? and status = 1",
 			longitude-DEFAULT_RANGE, longitude+DEFAULT_RANGE, latitude-DEFAULT_RANGE, latitude+DEFAULT_RANGE).Find(&shops)
-		//find := tool.DB.Where("longitude > ? and longitude < ? and latitude > ? and latitude < ? and status = 1",
-		//	longitude-DEFAULT_RANGE, longitude+DEFAULT_RANGE, latitude-DEFAULT_RANGE, latitude+DEFAULT_RANGE).Find(&shops)
 		//if find.Error != nil && find.RowsAffected!=0{
 		//	log.Println(find.Error.Error())
 		//	return nil
@@ -32,8 +30,6 @@ func (sd *ShopDao) GetShops(longitude, latitude float64, keyword string) []model
 		log.Println("进行关键字搜索")
 		tool.DB.Debug().Where("longitude > ? and longitude < ? and latitude > ? and latitude < ? and name like ? and status = 1",
 			longitude-DEFAULT_RANGE, longitude+DEFAULT_RANGE, latitude-DEFAULT_RANGE, latitude+DEFAULT_RANGE, "%"+keyword+"%").Find(&shops)
-		//find := tool.DB.Debug().Where("longitude > ? and longitude < ? and latitude > ? and latitude < ? and name like ? and status = 1",
-		//	longitude-DEFAULT_RANGE, longitude+DEFAULT_RANGE, latitude-DEFAULT_RANGE, latitude+DEFAULT_RANGE, keyword).Find(&shops)
 		//if find.Error != nil {
 		//	log.Println(find.Error.Error())
 		//	return nil
@@ -41,5 +37,14 @@ func (sd *ShopDao) GetShops(longitude, latitude float64, keyword string) []model
 	}
 
 	return shops
+}
 
+/**
+ * 根据商铺查询其对应支持的服务
+ */
+func (sd ShopDao) GetServiceByShopId(shopId int) []model.Service {
+	var services []model.Service
+	//tool.DB.Debug().Table("tb_service").Join("INNER", "tb_shop_service", "tb_service.id = tb_shop_service.service_id and tb_shop_service.shop_id ? ", shopId).Find(&services)
+	tool.DB.Debug().Table("tb_service").Joins("INNER JOIN tb_shop_service ON tb_service.id = tb_shop_service.service_id").Where("tb_shop_service.shop_id  = ?", shopId).Find(&services)
+	return services
 }

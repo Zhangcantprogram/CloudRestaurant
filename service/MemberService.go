@@ -10,6 +10,7 @@ import (
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/dysmsapi"
 	"log"
 	"math/rand"
+	"strconv"
 	"time"
 )
 
@@ -118,4 +119,16 @@ func (ms *MemberService) UploadAvatar(userId int64, fileName string) string {
 		return ""
 	}
 	return fileName
+}
+
+// 获取用户信息
+func (ms *MemberService) GetMemberInfoById(userId string) *model.Member {
+	id, err := strconv.Atoi(userId)
+	if err != nil {
+		log.Println(err.Error())
+		return nil
+	}
+
+	memberDao := dao.MemberDao{}
+	return memberDao.GetMemberInfoById(id)
 }

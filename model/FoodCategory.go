@@ -3,7 +3,7 @@ package model
 // 食品类别结构体
 type FoodCategory struct {
 	//类别ID
-	Id int `gorm:"primary_key;column:id" json:"id"`
+	Id int `gorm:"primaryKey;column:id" json:"id"`
 	//食品类别标题
 	Title string `gorm:"column:tile" json:"title"`
 	//食品描述

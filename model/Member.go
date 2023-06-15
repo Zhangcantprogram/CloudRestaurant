@@ -2,7 +2,7 @@ package model
 
 // 会员数据 定义结构体
 type Member struct {
-	Id           int64   `gorm:"primary_key;column:id" json:"id"`
+	Id           int64   `gorm:"primaryKey;column:id" json:"id"`
 	UserName     string  `gorm:"column:user_name" json:"user_name"`
 	Mobile       string  `gorm:"column:mobile" json:"mobile"`
 	Password     string  `gorm:"column:password" json:"password"`
@@ -10,7 +10,7 @@ type Member struct {
 	Avatar       string  `gorm:"column:avatar" json:"avatar"`
 	Balance      float64 `gorm:"column:balance" json:"balance"`
 	IsActive     int8    `gorm:"column:is_active" json:"is_active"`
-	city         string  `gorm:"column:city" json:"city"`
+	City         string  `gorm:"column:city" json:"city"`
 }
 
 // 自定义表名,与数据库表名一致

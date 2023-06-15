@@ -77,3 +77,14 @@ func (md *MemberDao) UploadAvatarByMember(id int64, fileName string) int64 {
 	}
 	return result.RowsAffected
 }
+
+// 查询用户信息
+func (md *MemberDao) GetMemberInfoById(userId int) *model.Member {
+	var member model.Member
+	first := tool.DB.Where("id = ?", userId).First(&member)
+	if first.Error != nil {
+		log.Println(first.Error.Error())
+		return nil
+	}
+	return &member
+}

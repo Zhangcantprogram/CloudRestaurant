@@ -1,7 +1,7 @@
 package model
 
 type SmsCode struct {
-	Id         int64  `gorm:"primary_key;column:id" json:"id"`
+	Id         int64  `gorm:"primaryKey;column:id" json:"id"`
 	Phone      string `gorm:"column:phone" json:"phone"`
 	BizId      string `gorm:"column:biz_id" json:"biz_id"`
 	Code       string `gorm:"column:code" json:"code"`

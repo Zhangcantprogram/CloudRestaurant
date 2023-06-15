@@ -22,9 +22,15 @@ func GetDb() {
 	}
 	fmt.Println(DB)
 	fmt.Println("cloudRestaurant数据库连接成功！！！")
+
+	//DB.Table("tb_shop").CreateTable(&model.Shop{}) //创建对应表
+	DB.Table("tb_goods").CreateTable(&model.Goods{}) //创建对应表
+	
 	//插入初始化shop数据
 	//InitShopData()
-	//DB.Table("tb_shop").CreateTable(&model.Shop{}) //创建对应表
+	//插入初始化goods数据
+	InitGoodsData()
+
 	//return db
 	//defer db.Close()
 }
@@ -64,6 +70,39 @@ func InitShopData() {
 			return
 		}
 
+	}
+	//提交事务
+	commit := tx.Commit()
+	if commit.Error != nil {
+		log.Println(commit.Error.Error())
+	}
+}
+
+func InitGoodsData() {
+	goods := []model.Goods{
+		model.Goods{Id: 1, Name: "小小鲜肉包", Description: "滑蛋牛肉粥(1份)+小小鲜肉包(4只)", SellCount: 14, Price: 25, OldPrice: 29, ShopId: 1},
+		model.Goods{Id: 2, Name: "滑蛋牛肉粥+小小鲜肉包", Description: "滑蛋牛肉粥(1份)+小小鲜肉包(3只)", SellCount: 6, Price: 35, OldPrice: 41, ShopId: 1},
+		model.Goods{Id: 3, Name: "滑蛋牛肉粥+绿甘蓝馅饼", Description: "滑蛋牛肉粥(1份)+绿甘蓝馅饼(1张)", SellCount: 2, Price: 25, OldPrice: 30, ShopId: 1},
+		model.Goods{Id: 4, Name: "茶香卤味蛋", Description: "咸鸡蛋", SellCount: 688, Price: 2.5, OldPrice: 3, ShopId: 1},
+		model.Goods{Id: 5, Name: "韭菜鸡蛋馅饼(2张)", Description: "韭菜鸡蛋馅饼", SellCount: 381, Price: 10, OldPrice: 12, ShopId: 1},
+		model.Goods{Id: 6, Name: "小小鲜肉包+豆浆套餐", Description: "小小鲜肉包(8只)装+豆浆(1杯)", SellCount: 335, Price: 9.9, OldPrice: 11.9, ShopId: 479},
+		model.Goods{Id: 7, Name: "翠香炒素饼", Description: "咸鲜翠香素炒饼", SellCount: 260, Price: 17.9, OldPrice: 20.9, ShopId: 485},
+		model.Goods{Id: 8, Name: "香煎鲜肉包", Description: "咸鲜猪肉鲜肉包", SellCount: 173, Price: 10.9, OldPrice: 12.9, ShopId: 486}}
+
+	//事务
+	tx := DB.Begin()
+	//事务操作：事务开始，执行操作（回滚），提交事务
+	if tx.Error != nil {
+		log.Println(tx.Error.Error())
+	}
+	for _, good := range goods {
+		result := DB.Create(&good)
+		if result.Error != nil {
+			log.Println(result.Error.Error())
+			//发生错误，回滚
+			tx.Rollback()
+			return
+		}
 	}
 	//提交事务
 	commit := tx.Commit()

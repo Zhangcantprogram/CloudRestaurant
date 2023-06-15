@@ -43,3 +43,11 @@ func (ss *ShopService) SearchShops(longitude, latitude, keyword string) []model.
 	shopDao := dao.ShopDao{}
 	return shopDao.GetShops(lon, lat, keyword)
 }
+
+/**
+ * 根据商铺查询其对应支持的服务
+ */
+func (ss *ShopService) GetServiceByShopId(shopId int) []model.Service {
+	shopDao := dao.ShopDao{}
+	return shopDao.GetServiceByShopId(shopId)
+}

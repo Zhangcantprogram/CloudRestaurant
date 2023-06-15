@@ -20,6 +20,7 @@ type MemberController struct {
 func (mc *MemberController) Router(engine *gin.Engine) {
 	engine.GET("/api/sendcode", mc.sendSmsCode)
 
+	//手机号 + 短信验证码登录
 	engine.POST("/api/login_sms", mc.smsLogin)
 
 	//获取验证码
@@ -28,11 +29,14 @@ func (mc *MemberController) Router(engine *gin.Engine) {
 	//验证验证码是否正确
 	engine.POST("/api/vertifycha", mc.verifyCaptcha)
 
-	//进行用户名和密码的登录功能
+	//进行用户名+密码 + 图片验证码 登录功能
 	engine.POST("/api/login_pwd", mc.nameLogin)
 
 	// 用户头像上传
 	engine.POST("/api/upload/avator", mc.uploadAvatar)
+
+	//用户信息查询
+	engine.GET("/api/userinfo", mc.userInfo)
 }
 
 // http://localhost:8090/api/sendcode?phone=13112345678
@@ -71,6 +75,8 @@ func (mc *MemberController) smsLogin(context *gin.Context) {
 		log.Println("member.Id-------------->", member.Id)
 		//log.Println("sess------------->", sess)
 		err := tool.SetSess(context, "user_"+strconv.Itoa(int(member.Id)), sess)
+		//设置cookie
+		context.SetCookie("cookie_user", strconv.Itoa(int(member.Id)), 10*60, "/", "localhost", true, true)
 		if err != nil {
 			//说明存在error，即用户虽然登录成功，但是session保存失败，也视为登录失败
 			tool.Failed(context, "用户登录失败！")
@@ -136,6 +142,10 @@ func (mc *MemberController) nameLogin(context *gin.Context) {
 		//log.Println("sess------------->", sess)
 		log.Println("set session user_" + strconv.Itoa(int(member.Id)))
 		err = tool.SetSess(context, "user_"+strconv.Itoa(int(member.Id)), sess)
+		//设置cookie
+		context.SetCookie("cookie_user", strconv.Itoa(int(member.Id)), 10*60, "/", "localhost", true, true)
+		auth, _ := tool.CookieAuth(context)
+		log.Println("get  cookie ---->", auth)
 		if err != nil {
 			//说明存在error，即用户虽然登录成功，但是session保存失败，也视为登录失败
 			tool.Failed(context, "用户登录失败！")
@@ -199,4 +209,34 @@ func (mc *MemberController) uploadAvatar(context *gin.Context) {
 
 	//5、返回结果
 	tool.Failed(context, "头像更新失败！")
+}
+
+/**
+ * 用户信息查询
+ */
+func (mc *MemberController) userInfo(context *gin.Context) {
+	cookie, err := tool.CookieAuth(context)
+	if err != nil {
+		log.Println(err.Error())
+		context.Abort()
+		log.Println("cookie获取失败！")
+		tool.Failed(context, "还未登录，请先登录！")
+	}
+
+	memberService := service.MemberService{}
+	member := memberService.GetMemberInfoById(cookie.Value)
+	log.Println("cookie---->" + cookie.Value)
+	if member != nil {
+		tool.Success(context, map[string]interface{}{
+			"id":            member.Id,
+			"user_name":     member.UserName,
+			"mobile":        member.Mobile,
+			"register_time": member.RegisterTime,
+			"avatar":        member.Avatar,
+			"balance":       member.Balance,
+			"city":          member.City,
+		})
+		return
+	}
+	tool.Failed(context, "用户信息获取失败！")
 }
