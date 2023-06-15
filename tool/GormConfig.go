@@ -23,8 +23,8 @@ func GetDb() {
 	fmt.Println(DB)
 	fmt.Println("cloudRestaurant数据库连接成功！！！")
 	//插入初始化shop数据
-	InitShopData()
-	DB.Table("tb_shop").CreateTable(&model.Shop{}) //创建对应表
+	//InitShopData()
+	//DB.Table("tb_shop").CreateTable(&model.Shop{}) //创建对应表
 	//return db
 	//defer db.Close()
 }
