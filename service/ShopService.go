@@ -40,7 +40,7 @@ func (ss *ShopService) SearchShops(longitude, latitude, keyword string) []model.
 		return nil
 	}
 
-	shopDao := dao.ShopDao{}
+	shopDao := &dao.ShopDao{}
 	return shopDao.GetShops(lon, lat, keyword)
 }
 

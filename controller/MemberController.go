@@ -9,7 +9,6 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"log"
-	"os"
 	"strconv"
 	"time"
 )
@@ -21,7 +20,7 @@ func (mc *MemberController) Router(engine *gin.Engine) {
 	engine.GET("/api/sendcode", mc.sendSmsCode)
 
 	//手机号 + 短信验证码登录
-	engine.POST("/api/login_sms", mc.smsLogin)
+	//engine.POST("/api/login_sms", mc.smsLogin)
 
 	//获取验证码
 	engine.GET("/api/captcha", mc.captcha)
@@ -36,7 +35,7 @@ func (mc *MemberController) Router(engine *gin.Engine) {
 	engine.POST("/api/upload/avator", mc.uploadAvatar)
 
 	//用户信息查询
-	engine.GET("/api/userinfo", mc.userInfo)
+	//engine.GET("/api/userinfo", mc.userInfo)
 }
 
 // http://localhost:8090/api/sendcode?phone=13112345678
@@ -56,39 +55,39 @@ func (mc *MemberController) sendSmsCode(context *gin.Context) {
 	tool.Failed(context, "手机验证码发送失败！......")
 }
 
-// 手机号+短信验证码  登录
-func (mc *MemberController) smsLogin(context *gin.Context) {
-	var smsLoginParam param.SmsLoginParam
-	//将请求体里的json通过解码解析出来
-	err := tool.Decode(context.Request.Body, &smsLoginParam)
-	if err != nil {
-		tool.Failed(context, "参数解析失败！......")
-	}
-
-	//完成手机号+验证码  登录服务
-	sc := service.MemberService{}
-	member := sc.SmsLogin(smsLoginParam)
-	if member != nil {
-		//将member进行序列化，为接下来的
-		sess, _ := json.Marshal(member)
-		//将登录成功的用户信息保存到session中
-		log.Println("member.Id-------------->", member.Id)
-		//log.Println("sess------------->", sess)
-		err := tool.SetSess(context, "user_"+strconv.Itoa(int(member.Id)), sess)
-		//设置cookie
-		context.SetCookie("cookie_user", strconv.Itoa(int(member.Id)), 10*60, "/", "localhost", true, true)
-		if err != nil {
-			//说明存在error，即用户虽然登录成功，但是session保存失败，也视为登录失败
-			tool.Failed(context, "用户登录失败！")
-			log.Println("Setsess用户登录失败!")
-			return
-		}
-		tool.Success(context, member)
-		log.Println("手机号+短信验证码 登录成功！！")
-		return
-	}
-	tool.Failed(context, "手机号验证码登录失败！......")
-}
+//// 手机号+短信验证码  登录
+//func (mc *MemberController) smsLogin(context *gin.Context) {
+//	var smsLoginParam param.SmsLoginParam
+//	//将请求体里的json通过解码解析出来
+//	err := tool.Decode(context.Request.Body, &smsLoginParam)
+//	if err != nil {
+//		tool.Failed(context, "参数解析失败！......")
+//	}
+//
+//	//完成手机号+验证码  登录服务
+//	sc := service.MemberService{}
+//	member := sc.SmsLogin(smsLoginParam)
+//	if member != nil {
+//		//将member进行序列化，为接下来的
+//		sess, _ := json.Marshal(member)
+//		//将登录成功的用户信息保存到session中
+//		log.Println("member.Id-------------->", member.Id)
+//		//log.Println("sess------------->", sess)
+//		err := tool.SetSess(context, "user_"+strconv.Itoa(int(member.Id)), sess)
+//		//设置cookie
+//		//context.SetCookie("cookie_user", strconv.Itoa(int(member.Id)), 10*60, "/", "localhost", true, true)
+//		if err != nil {
+//			//说明存在error，即用户虽然登录成功，但是session保存失败，也视为登录失败
+//			tool.Failed(context, "用户登录失败！")
+//			log.Println("Setsess用户登录失败!")
+//			return
+//		}
+//		tool.Success(context, member)
+//		log.Println("手机号+短信验证码 登录成功！！")
+//		return
+//	}
+//	tool.Failed(context, "手机号验证码登录失败！......")
+//}
 
 // 生成验证码
 func (mc *MemberController) captcha(context *gin.Context) {
@@ -143,9 +142,9 @@ func (mc *MemberController) nameLogin(context *gin.Context) {
 		log.Println("set session user_" + strconv.Itoa(int(member.Id)))
 		err = tool.SetSess(context, "user_"+strconv.Itoa(int(member.Id)), sess)
 		//设置cookie
-		context.SetCookie("cookie_user", strconv.Itoa(int(member.Id)), 10*60, "/", "localhost", true, true)
-		auth, _ := tool.CookieAuth(context)
-		log.Println("get  cookie ---->", auth)
+		//context.SetCookie("cookie_user", strconv.Itoa(int(member.Id)), 10*60, "/", "localhost", true, true)
+		//auth, _ := tool.CookieAuth(context)
+		//log.Println("get  cookie ---->", auth)
 		if err != nil {
 			//说明存在error，即用户虽然登录成功，但是session保存失败，也视为登录失败
 			tool.Failed(context, "用户登录失败！")
@@ -172,7 +171,8 @@ func (mc *MemberController) uploadAvatar(context *gin.Context) {
 
 	//2、判断用户是否已经登录，使用session
 	log.Println("get session user_" + userId)
-	sess := tool.GetSess(context, "user_"+userId)
+	//sess := tool.GetSess(context, "user_"+userId)
+	sess := tool.GetSess(context, "mysession")
 	log.Println("用户登录时的sess---->", sess)
 	if sess == nil {
 		tool.Failed(context, "用户登录信息有误！")
@@ -195,7 +195,7 @@ func (mc *MemberController) uploadAvatar(context *gin.Context) {
 	fileId := tool.UploadFile(fileName)
 	if fileId != "" {
 		//删除本地文件
-		os.Remove(fileName)
+		//os.Remove(fileName)
 
 		//将文件对应路径保存到数据库中
 		ms := service.MemberService{}
