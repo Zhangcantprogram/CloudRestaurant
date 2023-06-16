@@ -13,6 +13,7 @@ type GoodsController struct {
 
 func (gc *GoodsController) Router(engine *gin.Engine) {
 	engine.GET("/api/goods", gc.getGoods)
+	engine.DELETE("/api/delete_goods", gc.deleteGoodsById)
 }
 
 // 获取对应商家的在售商品
@@ -39,4 +40,14 @@ func (gc *GoodsController) getGoods(context *gin.Context) {
 	}
 
 	tool.Failed(context, "未查询到商品信息！")
+}
+
+// 根据Id删除goods
+func (gc *GoodsController) deleteGoodsById(context *gin.Context) {
+	id := context.Query("goods_id")
+
+	goodsService := service.GoodsService{}
+	goodsService.DeleteGoodsById(id)
+
+	tool.Success(context, "删除成功！")
 }
