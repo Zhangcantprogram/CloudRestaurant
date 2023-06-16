@@ -70,8 +70,8 @@ func (md *MemberDao) QueryByName(name string, password string) *model.Member {
 // 更新头像，更新avatar字段
 func (md *MemberDao) UploadAvatarByMember(id int64, fileName string) int64 {
 	member := model.Member{Avatar: fileName}
-	result := tool.DB.Where("user_id = ?", id).Update(&member)
-	if member.Id == 0 {
+	result := tool.DB.Table("tb_member").Where("id = ?", id).Update(&member)
+	if result.Error != nil {
 		log.Println(result.Error.Error())
 		return 0
 	}

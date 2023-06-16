@@ -7,6 +7,8 @@ import (
 	"log"
 )
 
+var Sess sessions.Session
+
 // 初始化session操作，并使用中间件
 func InitSession(engine *gin.Engine) {
 	redisConfig := GetConfig().Redis
@@ -17,11 +19,17 @@ func InitSession(engine *gin.Engine) {
 	}
 
 	engine.Use(sessions.Sessions("mysession", store))
+
+}
+
+// 初始化全局session
+func InitSess(ctx *gin.Context) {
+	Sess = sessions.Default(ctx)
 }
 
 // 自定义set方法
-func SetSess(context *gin.Context, key interface{}, value interface{}) error {
-	session := sessions.Default(context)
+func SetSess(session sessions.Session, key interface{}, value interface{}) error {
+	//session := sessions.Default(context)
 	if session == nil {
 		return nil
 	}
@@ -30,8 +38,8 @@ func SetSess(context *gin.Context, key interface{}, value interface{}) error {
 }
 
 // 自定义get方法
-func GetSess(context *gin.Context, key interface{}) interface{} {
-	session := sessions.Default(context)
+func GetSess(session sessions.Session, key interface{}) interface{} {
+	//session := sessions.Default(context)
 	if session == nil {
 		return nil
 	}

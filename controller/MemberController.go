@@ -20,7 +20,7 @@ func (mc *MemberController) Router(engine *gin.Engine) {
 	engine.GET("/api/sendcode", mc.sendSmsCode)
 
 	//手机号 + 短信验证码登录
-	//engine.POST("/api/login_sms", mc.smsLogin)
+	engine.POST("/api/login_sms", mc.smsLogin)
 
 	//获取验证码
 	engine.GET("/api/captcha", mc.captcha)
@@ -55,39 +55,42 @@ func (mc *MemberController) sendSmsCode(context *gin.Context) {
 	tool.Failed(context, "手机验证码发送失败！......")
 }
 
-//// 手机号+短信验证码  登录
-//func (mc *MemberController) smsLogin(context *gin.Context) {
-//	var smsLoginParam param.SmsLoginParam
-//	//将请求体里的json通过解码解析出来
-//	err := tool.Decode(context.Request.Body, &smsLoginParam)
-//	if err != nil {
-//		tool.Failed(context, "参数解析失败！......")
-//	}
-//
-//	//完成手机号+验证码  登录服务
-//	sc := service.MemberService{}
-//	member := sc.SmsLogin(smsLoginParam)
-//	if member != nil {
-//		//将member进行序列化，为接下来的
-//		sess, _ := json.Marshal(member)
-//		//将登录成功的用户信息保存到session中
-//		log.Println("member.Id-------------->", member.Id)
-//		//log.Println("sess------------->", sess)
-//		err := tool.SetSess(context, "user_"+strconv.Itoa(int(member.Id)), sess)
-//		//设置cookie
-//		//context.SetCookie("cookie_user", strconv.Itoa(int(member.Id)), 10*60, "/", "localhost", true, true)
-//		if err != nil {
-//			//说明存在error，即用户虽然登录成功，但是session保存失败，也视为登录失败
-//			tool.Failed(context, "用户登录失败！")
-//			log.Println("Setsess用户登录失败!")
-//			return
-//		}
-//		tool.Success(context, member)
-//		log.Println("手机号+短信验证码 登录成功！！")
-//		return
-//	}
-//	tool.Failed(context, "手机号验证码登录失败！......")
-//}
+// 手机号+短信验证码  登录
+func (mc *MemberController) smsLogin(context *gin.Context) {
+	//初始化全局session
+	tool.InitSess(context)
+
+	var smsLoginParam param.SmsLoginParam
+	//将请求体里的json通过解码解析出来
+	err := tool.Decode(context.Request.Body, &smsLoginParam)
+	if err != nil {
+		tool.Failed(context, "参数解析失败！......")
+	}
+
+	//完成手机号+验证码  登录服务
+	sc := service.MemberService{}
+	member := sc.SmsLogin(smsLoginParam)
+	if member != nil {
+		//将member进行序列化，为接下来的
+		sess, _ := json.Marshal(member)
+		//将登录成功的用户信息保存到session中
+		log.Println("member.Id-------------->", member.Id)
+		log.Println("sess------------->", sess)
+		err = tool.SetSess(tool.Sess, "user_"+strconv.Itoa(int(member.Id)), sess)
+		//设置cookie
+		//context.SetCookie("cookie_user", strconv.Itoa(int(member.Id)), 10*60, "/", "localhost", true, true)
+		if err != nil {
+			//说明存在error，即用户虽然登录成功，但是session保存失败，也视为登录失败
+			tool.Failed(context, "用户登录失败！")
+			log.Println("Setsess用户登录失败!")
+			return
+		}
+		tool.Success(context, member)
+		log.Println("手机号+短信验证码 登录成功！！")
+		return
+	}
+	tool.Failed(context, "手机号验证码登录失败！......")
+}
 
 // 生成验证码
 func (mc *MemberController) captcha(context *gin.Context) {
@@ -114,6 +117,8 @@ func (mc *MemberController) verifyCaptcha(context *gin.Context) {
 
 // 根据用户名和密码 来进行登录
 func (mc *MemberController) nameLogin(context *gin.Context) {
+	tool.InitSess(context)
+
 	//1、获取前端传来的参数
 	var loginParam param.LoginParam
 	err := tool.Decode(context.Request.Body, &loginParam)
@@ -140,11 +145,9 @@ func (mc *MemberController) nameLogin(context *gin.Context) {
 		fmt.Println("member.Id-------------->", member.Id)
 		//log.Println("sess------------->", sess)
 		log.Println("set session user_" + strconv.Itoa(int(member.Id)))
-		err = tool.SetSess(context, "user_"+strconv.Itoa(int(member.Id)), sess)
+		err = tool.SetSess(tool.Sess, "user_"+strconv.Itoa(int(member.Id)), sess)
 		//设置cookie
 		//context.SetCookie("cookie_user", strconv.Itoa(int(member.Id)), 10*60, "/", "localhost", true, true)
-		//auth, _ := tool.CookieAuth(context)
-		//log.Println("get  cookie ---->", auth)
 		if err != nil {
 			//说明存在error，即用户虽然登录成功，但是session保存失败，也视为登录失败
 			tool.Failed(context, "用户登录失败！")
@@ -171,9 +174,8 @@ func (mc *MemberController) uploadAvatar(context *gin.Context) {
 
 	//2、判断用户是否已经登录，使用session
 	log.Println("get session user_" + userId)
-	//sess := tool.GetSess(context, "user_"+userId)
-	sess := tool.GetSess(context, "mysession")
-	log.Println("用户登录时的sess---->", sess)
+	sess := tool.GetSess(tool.Sess, "user_"+userId)
+
 	if sess == nil {
 		tool.Failed(context, "用户登录信息有误！")
 		log.Println("用户登录信息有误！")
@@ -216,6 +218,7 @@ func (mc *MemberController) uploadAvatar(context *gin.Context) {
  */
 func (mc *MemberController) userInfo(context *gin.Context) {
 	cookie, err := tool.CookieAuth(context)
+	log.Println("cookie---->", cookie)
 	if err != nil {
 		log.Println(err.Error())
 		context.Abort()
