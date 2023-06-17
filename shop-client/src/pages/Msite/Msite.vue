@@ -26,7 +26,7 @@
           <div class="swiper-slide" v-for="(pages,index) in categorysArr" :key="index">
             <a href="javascript:" class="link_to_food" v-for="(data,index) in pages" :key="index">
               <div class="food_container">
-                <img :src="baseImageUrl+data.image_url">
+                <img :src="baseImageUrl">
               </div>
               <span>{{data.title}}</span>
             </a>
@@ -60,7 +60,7 @@ import {mapState} from 'vuex'
 export default {
   data () {
     return {
-      baseImageUrl: 'https://fuss10.elemecdn.com'
+      baseImageUrl: 'https://ts1.cn.mm.bing.net/th/id/R-C.74c894c7dcd3068ea7dda3a3df457462?rik=clNHo3Q%2f31nRQw&riu=http%3a%2f%2fwww.kuaipng.com%2fUploads%2fpic%2fw%2f2020%2f05-02%2f79615%2fwater_79615_698_698_.png&ehk=v%2bj%2fjirHjlwtUqJ%2bc0%2fES7ACYIqJyg0pYmO%2fld1U3%2b8%3d&risl=&pid=ImgRaw&r=0'
     }
   },
   components: {

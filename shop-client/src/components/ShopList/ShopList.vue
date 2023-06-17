@@ -54,7 +54,7 @@ import Star from '../Star/Star.vue'
 export default {
   data () {
     return {
-      baseImgUrl: 'https://raw.githubusercontent.com/W-Qing/Vue-MintShop/master/mintshop-client/src/components/ShopList/images/'
+      baseImgUrl: 'https://fuss10.elemecdn.com/8/40/02872ce8aefe75c16d3190e75ad61jpeg.jpeg'
     }
   },
   computed: {

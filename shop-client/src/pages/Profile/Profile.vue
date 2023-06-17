@@ -10,6 +10,7 @@
             <!-- <img class="img-change" onclick="change" alt="" /> -->
             <i class="icon-yonghuming-1" :style="{backgroundImage:'url('+img+')'}"></i>
             <input id="upload_file" ref="upload_file" type="file" class="upload_file" accept="image/png,image/jpeg,image/jpg" multiple="false" @change="inputChange" />
+            <img src="">
           </div>
           <div class="user-info">
             <p class="user-info-top"> {{userInfo.user_name || '登录/注册'}}</p>
@@ -145,7 +146,9 @@ export default {
       const result = await uploadFile(formData)
       if (result.code === 0) {
         Toast('上传成功')
-        this.img = result.data
+        this.img = "http://43.139.78.177/"+ result.data
+        console.log(1111)
+        console.log(this.img)
       } else {
         Toast(result.msg)
       }
