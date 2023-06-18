@@ -26,6 +26,9 @@ func main() {
 	//初始化session
 	tool.InitSession(app)
 
+	//初始化支付宝功能
+	tool.InitAlipay()
+
 	//设置全局跨域访问
 	app.Use(Cors())
 
@@ -43,6 +46,7 @@ func registerRouter(engine *gin.Engine) {
 	new(controller.FoodCategoryController).Router(engine)
 	new(controller.ShopController).Router(engine)
 	new(controller.GoodsController).Router(engine)
+	new(controller.AliPayController).Router(engine)
 }
 
 // 跨域中间件配置
