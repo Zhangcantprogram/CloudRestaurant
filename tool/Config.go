@@ -15,6 +15,7 @@ type Config struct {
 	Sms      SmsConfig      `json:"sms"`
 	DataBase DataBaseConfig `json:"database"`
 	Redis    RedisConfig    `json:"redis"`
+	Alipay   AlipayConfig   `json:"alipay"`
 }
 
 // 短信验证码配置
@@ -45,6 +46,13 @@ type RedisConfig struct {
 	Port     string `json:"port"`
 	Password string `json:"password"`
 	Db       int    `json:"db"`
+}
+
+// 支付宝配置信息
+type AlipayConfig struct {
+	AppId      string `json:"app_id"`
+	PrivateKey string `json:"private_key"`
+	PublicKey  string `json:"public_key"`
 }
 
 var _cfg *Config = &Config{}

@@ -25,10 +25,10 @@
           <!-- swiper的轮播div -->
           <div class="swiper-slide" v-for="(pages,index) in categorysArr" :key="index">
             <a href="javascript:" class="link_to_food" v-for="(data,index) in pages" :key="index">
-              <div class="food_container">
-                <img :src="baseImageUrl">
-              </div>
-              <span>{{data.title}}</span>
+                <div class="food_container">
+                  <img :src="data.image_url">
+                </div>
+              <span>{{data.description}}</span>
             </a>
           </div>
         </div>
@@ -60,7 +60,11 @@ import {mapState} from 'vuex'
 export default {
   data () {
     return {
-      baseImageUrl: 'https://ts1.cn.mm.bing.net/th/id/R-C.74c894c7dcd3068ea7dda3a3df457462?rik=clNHo3Q%2f31nRQw&riu=http%3a%2f%2fwww.kuaipng.com%2fUploads%2fpic%2fw%2f2020%2f05-02%2f79615%2fwater_79615_698_698_.png&ehk=v%2bj%2fjirHjlwtUqJ%2bc0%2fES7ACYIqJyg0pYmO%2fld1U3%2b8%3d&risl=&pid=ImgRaw&r=0'
+      baseImageUrl: 'https://ts1.cn.mm.bing.net/th/id/R-C.74c894c7dcd3068ea7dda3a3df457462?rik=clNHo3Q%2f31nRQw&riu=http%3a%2f%2fwww.kuaipng.com%2fUploads%2fpic%2fw%2f2020%2f05-02%2f79615%2fwater_79615_698_698_.png&ehk=v%2bj%2fjirHjlwtUqJ%2bc0%2fES7ACYIqJyg0pYmO%2fld1U3%2b8%3d&risl=&pid=ImgRaw&r=0',
+      backImagUrlList:[
+        "http://img.juhe.cn/cookbook/s/1/45_0824e37faf00b71e.jpg",
+        "https://cn.bing.com/images/search?q=%E4%B8%AD%E5%9B%BD%E8%8F%9C%E5%9B%BE%E7%89%87&FORM=IQFRBA&id=A25DF18E0516BC0A544D82CFCBB18EE1D1D9271C",
+      ]
     }
   },
   components: {
@@ -77,6 +81,7 @@ export default {
     categorysArr () {
       // 1.先从当前组件中得到所有食品分类的一维数组
       const {categorys} = this
+      console.log(categorys)
       // 2.准备一个空的二维数组--categorysArr
       const arr = []
       // for (let i = 0, len = categorys.length; i < len; i += 8) {
@@ -95,8 +100,10 @@ export default {
           arr.push(minArr)
         }
         // 将当前分类信息保存到小数组(pages)中
+        console.log(data)
         minArr.push(data)
       })
+      console.log(arr)
       return arr
     }
   },

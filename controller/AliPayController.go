@@ -11,12 +11,14 @@ type AliPayController struct {
 
 func (apc *AliPayController) Router(engine *gin.Engine) {
 	engine.GET("/api/pay", apc.pay)
-	engine.GET("/api/return", apc.notify)
+	//engine.GET("/api/return", apc.notify)
 }
 
 // 支付功能
 func (apc *AliPayController) pay(context *gin.Context) {
-	payUrl := tool.WebPageAlipay(context)
+	amount := context.Query("amount")
+	//调用支付宝接口
+	payUrl := tool.WebPageAlipay(amount)
 	if payUrl == "" {
 		tool.Failed(context, "支付产生错误！")
 		return

@@ -25,6 +25,7 @@ export default {
   },
   [RECEIVE_SHOPS] (state, {shops}) {
     state.shops = shops
+    console.log(shops)
   },
   [RECEIVE_USER_INFO] (state, {userInfo}) {
     state.userInfo = userInfo

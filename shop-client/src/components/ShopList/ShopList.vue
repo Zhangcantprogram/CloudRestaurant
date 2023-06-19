@@ -4,7 +4,7 @@
       <li class="shop_li border-1px" v-for="(shop,index) in shops" :key="index" @click="$router.push('/shop')">
         <a>
           <div class="shop_left">
-            <img class="shop_img" :src="baseImgUrl + shop.image_path">
+            <img class="shop_img" :src="shop.image_path">
           </div>
           <div class="shop_right">
             <section class="shop_detail_header">
@@ -31,7 +31,7 @@
             </section>
             <section class="shop_distance">
               <p class="shop_delivery_msg">
-                <span>¥{{shop.minimum_order_amount}}起送</span>
+                <span >¥{{shop.minimum_order_amount}}起送</span>
                 <span class="segmentation">/</span>
                 <span>配送费约¥{{shop.delivery_fee}}</span>
               </p>
@@ -62,7 +62,7 @@ export default {
   },
   components: {
     Star
-  }
+  },
 }
 </script>
 <style lang="stylus" rel="stylesheet/stylus">

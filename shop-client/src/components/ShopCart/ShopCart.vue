@@ -13,7 +13,7 @@
           <div class="desc">另需配送费￥{{info.deliveryPrice}}元</div>
         </div>icon-shopping
         <div class="content-right">
-          <div class="pay" :class="payClass">
+          <div class="pay" :class="payClass" @click="payMoney">
             {{payText}}
           </div>
         </div>
@@ -48,6 +48,7 @@ import { MessageBox } from 'mint-ui'
 import BScroll from 'better-scroll'
 import {mapState, mapGetters} from 'vuex'
 import CartControl from '../CartControl/CartControl.vue'
+import {payMoney} from '../../api'
 
 export default {
   data () {
@@ -119,6 +120,19 @@ export default {
       MessageBox.confirm('确定清空购物车吗?').then(action => {
         this.$store.dispatch('clearCart')
       }, () => {})
+    },
+    async payMoney(){
+      if (this.totalCount <= 0 ){
+        return
+      }else {
+        const {totalPrice} = this
+
+        const result =await payMoney(totalPrice)
+        console.log(result)
+        let url = result.data
+        console.log(url)
+        window.open(url,"_blank")
+      }
     }
   },
   components: {

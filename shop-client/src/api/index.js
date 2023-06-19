@@ -61,3 +61,5 @@ export const reqShopRatings = () => ajax('/ratings')
 export const reqShopGoods = () => ajax('/goods')
 
 export const uploadFile = (formData) => ajax(BASE_URL + '/upload/avator', formData, 'POST')
+
+export const payMoney = (amount) => ajax(BASE_URL + '/pay', {amount})
