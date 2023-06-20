@@ -46,9 +46,9 @@
 
 5、支付的功能集成了支付宝开放平台的沙箱环境，使用沙箱环境账号成功登陆后即可实现支付功能
 
-![![img](https://gitee.com/zsj20020818/cloud-restaurant/raw/master/images/img_4.png)](D:\Study\GoLearn\GoWork\src\CloudRestaurant\images\img_4.png)
+![img](https://gitee.com/zsj20020818/cloud-restaurant/raw/master/images/img_4.png)]
 
-![![img](https://gitee.com/zsj20020818/cloud-restaurant/raw/master/images/img_5.png)](D:\Study\GoLearn\GoWork\src\CloudRestaurant\images\img_5.png)
+![img](https://gitee.com/zsj20020818/cloud-restaurant/raw/master/images/img_5.png)
 
 
 
