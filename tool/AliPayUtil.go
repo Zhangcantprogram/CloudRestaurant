@@ -1,6 +1,7 @@
 package tool
 
 import (
+	uuid "github.com/satori/go.uuid"
 	"github.com/smartwalle/alipay/v3"
 	"log"
 )
@@ -30,7 +31,8 @@ func WebPageAlipay(amount string) string {
 	//tradePagePay.ReturnURL = "https://www.baidu.com"
 	//tradePagePay.NotifyURL = "https://www.baidu.com"
 
-	orderId := "2088722004229570"
+	orderId := uuid.NewV1().String()
+
 	//log.Println("orderId----->", orderId)
 	//付款标题
 	tradePagePay.Subject = "云餐厅，订单号：" + orderId

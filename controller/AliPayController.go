@@ -3,7 +3,6 @@ package controller
 import (
 	"CloudRestaurant/tool"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 type AliPayController struct {
@@ -23,7 +22,7 @@ func (apc *AliPayController) pay(context *gin.Context) {
 		tool.Failed(context, "支付产生错误！")
 		return
 	}
-	context.Redirect(http.StatusFound, payUrl)
+	tool.Success(context, payUrl)
 }
 
 // 接受通知接口
